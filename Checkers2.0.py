@@ -94,7 +94,7 @@ class CheckersGame(Frame):
             self.computerPlayer = self.colors.index(computerPlayer)
         else:
             self.computerPlayer = -1
-        self.direction=[1,-1]  # the directions of "forward" motion
+        self.direction=[-1,1]  # the directions of "forward" motion
         self.turn = 1  # player 0 goes first
         self.pieceSelected = None    # keeps track of whether a piece has been clicked on
         self.jumpInProgress = False  # keeps track of whether a piece is in mid-jump
@@ -103,16 +103,16 @@ class CheckersGame(Frame):
             for column in range(8):
                 color = self.boardColors[(row+column)%2]
                 self.squares[(row,column)] = CheckerSquare(self,row,column,color)
-        # place the pieces for player 0
+        # place the pieces for player 1
         for row in range(3):
             for index in range(4):
                 square = (row,2*index+((row+1)%2))
-                self.squares[square].set_checker(0,self.colors[0],False)
-        # place the pieces for player 1
+                self.squares[square].set_checker(1,self.colors[1],False)
+        # place the pieces for player 0
         for row in range(5,8):
             for index in range(4):
                 square = (row,2*index+((row+1)%2))
-                self.squares[square].set_checker(1,self.colors[1],False)
+                self.squares[square].set_checker(0,self.colors[0],False)
         # set up the display below the board
         self.rowconfigure(8,minsize=3) # leave some space
         Label(self,text='Turn:',font=('Arial',18)).grid(row=9,column=0,columnspan=2,sticky=E)
@@ -227,7 +227,7 @@ class CheckersGame(Frame):
         return False
 
     def piece_can_move(self,row,col,getList=False):
-        '''CheckersGame.piece_can_move(row,col,[getList]) -> bool
+        '''CheckersGame.piece_can_move(row,col[,getList]) -> bool
         default: returns True if the piece at (row,col) can make a normal move, False if not
         if getList is True: returns list of squares to move to'''
         direction = self.direction[self.turn]
@@ -270,7 +270,7 @@ class CheckersGame(Frame):
         moves the piece that's on square (oldr,oldc) to square (newr,newc)'''
         # check if the piece is a king
         isKing = self.squares[(oldr,oldc)].is_king()
-        if newr == 7 * (1-self.turn):  # made to last row, make it a king
+        if newr == 7 * self.turn:  # made to last row, make it a king
             isKing = True
         # erase the piece from the old square, and place it in the new square
         self.squares[(oldr,oldc)].clear_checker()
@@ -423,7 +423,7 @@ class CheckersGame(Frame):
 
        
 def get_game_type():
-    '''get_game_type() -> str
+    '''get_game_type() -> str or None
     gets input for type of game'''
     #  get player input
     response = ''
